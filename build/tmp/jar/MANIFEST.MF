@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Class-Path: kotlin-stdlib-jdk8-1.2.60.jar tornadofx-1.7.17.jar kotlin-
+ stdlib-1.2.60.jar kotlin-stdlib-jdk7-1.2.60.jar javax.json-1.1.2.jar 
+ kotlin-reflect-1.2.60.jar kotlin-stdlib-common-1.2.60.jar annotations
+ -13.0.jar javax.json-api-1.1.2.jar
+Main-Class: com.traderbook.platform.app.App
+
