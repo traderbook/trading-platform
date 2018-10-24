@@ -9,3 +9,9 @@ gradle build
 
 java -jar "build/libs/Trading platform.jar"
 ```
+
+![](https://github.com/traderbook/docs/blob/master/images/readme/git-clone.gif)
+
+![](https://github.com/traderbook/docs/blob/master/images/readme/gradle%20build.gif)
+
+![](https://github.com/traderbook/docs/blob/master/images/readme/java-jar.gif)
