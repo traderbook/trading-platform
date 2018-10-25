@@ -1,24 +1,45 @@
 package com.traderbook.platform.view
 
-import com.traderbook.platform.view.panels.Graphics
-import com.traderbook.platform.view.panels.InstrumentAccount
-import com.traderbook.platform.view.panels.MainMenu
-import com.traderbook.platform.view.panels.StatusBar
+import com.traderbook.platform.app.controllers.StackPaneController
+import com.traderbook.platform.app.models.emuns.StackPane
+import com.traderbook.platform.view.panels.*
+import javafx.scene.layout.BorderPane
 import tornadofx.*
 
 class MainView : View("Main view") {
-    override val root = borderpane {
-        top {
-            add(MainMenu::class)
+    private val stackPaneController: StackPaneController by inject()
+
+    override val root = stackpane {
+        borderpane {
+            center {
+                add(AccountForm::class)
+            }
+
+            visibleProperty().value = false
         }
-        center {
-            add(Graphics::class)
+
+        borderpane {
+            top {
+                add(MainMenu::class)
+            }
+            center {
+                add(Graphics::class)
+            }
+            left {
+                add(Accounts::class)
+            }
+            bottom {
+                add(StatusBar::class)
+            }
+
+            visibleProperty().value = false
         }
-        left {
-            add(InstrumentAccount::class)
-        }
-        bottom {
-            add(StatusBar::class)
-        }
+    }
+
+    init {
+        stackPaneController.addStackPane(StackPane.CONNECTION_ACCOUNT, root.getChildList()!![0])
+        stackPaneController.addStackPane(StackPane.DASHBOARD, root.getChildList()!![1])
+
+        stackPaneController.selectPane(StackPane.DASHBOARD)
     }
 }
