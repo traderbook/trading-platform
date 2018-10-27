@@ -7,7 +7,7 @@ cd trading-platform
 
 gradle build
 
-java -jar "build/libs/Trading platform.jar"
+java -jar "build/libs/trading-platform.jar"
 ```
 
 ![](https://github.com/traderbook/docs/blob/master/images/readme/git-clone.gif)
