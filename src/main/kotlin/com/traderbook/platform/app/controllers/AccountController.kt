@@ -2,26 +2,27 @@ package com.traderbook.platform.app.controllers
 
 import com.traderbook.platform.app.events.AccountListRefreshEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
-import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.emuns.AccountType
 import com.traderbook.platform.app.models.emuns.Broker
 import com.traderbook.platform.app.models.emuns.StackPane
 import com.traderbook.platform.app.models.views.AccountView
-import org.jetbrains.exposed.sql.transactions.transaction
+import com.traderbook.platform.app.services.AccountService
 import tornadofx.*
 
 class AccountController : Controller() {
     private val stackPaneController: StackPaneController by inject()
+    private val accountService = AccountService()
 
     val accountList = arrayListOf<AccountView>().observable()
     var accountIndex: Int? = null
 
+    /**
+     * Permet de charger la liste des comptes de trading enregistrés dans la base de données
+     */
     init {
         runLater {
-            transaction {
-                Account.all().forEach {
-                    accountList.add(AccountView(it.id.value, Broker.valueOf(it.broker), AccountType.valueOf(it.accountType), it.username, it.password, it.accountId))
-                }
+            accountService.read().forEach {
+                accountList.add(AccountView(it.id.value, Broker.valueOf(it.broker), AccountType.valueOf(it.accountType), it.username, it.password, it.accountId))
             }
         }
     }
@@ -42,35 +43,32 @@ class AccountController : Controller() {
      */
     fun connection(id: Int?, broker: Broker, accountType: AccountType, username: String, password: String) {
         if (id != null) {
-            transaction {
-                val account = Account.findById(id)
+            val account = accountService.update(
+                    id,
+                    "$broker",
+                    "$accountType",
+                    username,
+                    password
+            )
 
-                if (account != null) {
-                    account.broker = "$broker"
-                    account.accountType = "$accountType"
-                    account.username = username
-                    account.password = password
-
-                    accountList[accountIndex!!].broker = broker
-                    accountList[accountIndex!!].accountType = accountType
-                    accountList[accountIndex!!].username = username
-                    accountList[accountIndex!!].password = password
-                }
+            if (account != null) {
+                accountList[accountIndex!!].broker = broker
+                accountList[accountIndex!!].accountType = accountType
+                accountList[accountIndex!!].username = username
+                accountList[accountIndex!!].password = password
             }
         } else {
-            var accountId = "ZERTYUI"
+            val accountId = "ZERTYUI"
 
-            transaction {
-                var account = Account.new {
-                    this.broker = broker.toString()
-                    this.accountType = accountType.toString()
-                    this.username = username
-                    this.password = password
-                    this.accountId = accountId
-                }
+            val account = accountService.create(
+                    broker.toString(),
+                    accountType.toString(),
+                    username,
+                    password,
+                    accountId
+            )
 
-                accountList.add(AccountView(account.id.value, broker, accountType, username, password, accountId))
-            }
+            accountList.add(AccountView(account!!.id.value, broker, accountType, username, password, accountId))
         }
 
         fire(AccountListRefreshEvent())
@@ -87,7 +85,9 @@ class AccountController : Controller() {
      * Permet de supprimer un compte de trading et de le déconnecter avant
      */
     fun deleteAccount(account: AccountView) {
-        println("Tu n'a pas encore supprimer le compte...")
+        accountService.delete(account.id)
+
+        accountList.remove(account)
     }
 
     /**
@@ -95,5 +95,6 @@ class AccountController : Controller() {
      */
     fun logout(account: AccountView) {
         println("Tu n'a pas encore déconnecter un compte")
+        println(account.toString())
     }
 }

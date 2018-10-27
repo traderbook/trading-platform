@@ -5,7 +5,7 @@ import com.traderbook.platform.app.events.AccountListRefreshEvent
 import javafx.scene.control.SelectionMode
 import tornadofx.*
 
-class Accounts : View("Accounts list") {
+class Accounts : View("Accounts read") {
     private val accountController: AccountController by inject()
 
     override val root = vbox {
@@ -24,7 +24,7 @@ class Accounts : View("Accounts list") {
                 }
 
                 item("DELETE").action {
-                    selectedItem?.let{
+                    selectedItem?.let {
                         accountController.deleteAccount(it)
                     }
                 }
@@ -35,6 +35,8 @@ class Accounts : View("Accounts list") {
                     }
                 }
             }
+
+            placeholder = label("EMPTY LIST CLICK ADD ACCOUNT")
 
             selectionModel.selectionMode = SelectionMode.SINGLE
 
