@@ -18,6 +18,24 @@ class Accounts : View("Accounts list") {
                 accountController.selectItem(selectionModel.selectedIndex)
             }
 
+            contextmenu {
+                item("ADD").action {
+                    accountController.addAccount()
+                }
+
+                item("DELETE").action {
+                    selectedItem?.let{
+                        accountController.deleteAccount(it)
+                    }
+                }
+
+                item("LOGOUT").action {
+                    selectedItem?.let {
+                        accountController.logout(it)
+                    }
+                }
+            }
+
             selectionModel.selectionMode = SelectionMode.SINGLE
 
             subscribe<AccountListRefreshEvent> {

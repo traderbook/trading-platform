@@ -76,7 +76,24 @@ class AccountController : Controller() {
         fire(AccountListRefreshEvent())
     }
 
+    /**
+     * Permet d'afficher le formulaire de connexion
+     */
     fun addAccount() {
         stackPaneController.selectPane(StackPane.CONNECTION_ACCOUNT)
+    }
+
+    /**
+     * Permet de supprimer un compte de trading et de le déconnecter avant
+     */
+    fun deleteAccount(account: AccountView) {
+        println("Tu n'a pas encore supprimer le compte...")
+    }
+
+    /**
+     * Permet de déconnecter un compte de trading
+     */
+    fun logout(account: AccountView) {
+        println("Tu n'a pas encore déconnecter un compte")
     }
 }
