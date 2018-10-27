@@ -107,6 +107,8 @@ class AccountForm : View("My View") {
             if (accountController.accountIndex != null) {
                 accountController.accountList.apply {
                     this[accountController.accountIndex!!].apply {
+                        brokerField.value = brokerProperty.value
+                        accountTypeField.value = accountTypeProperty.value
                         usernameField.text = usernameProperty.value
                         passwordField.text = passwordProperty.value
                     }
