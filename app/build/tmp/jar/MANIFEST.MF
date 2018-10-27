@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: exposed-0.10.5.jar sqlite-jdbc-3.25.2.jar tornadofx-1.7.17
- .jar kotlin-stdlib-jdk8-1.2.71.jar kotlin-reflect-1.2.61.jar kotlin-s
- tdlib-jdk7-1.2.71.jar kotlin-stdlib-1.2.71.jar joda-time-2.9.9.jar sl
- f4j-api-1.7.25.jar javax.json-1.1.2.jar kotlin-stdlib-common-1.2.71.j
- ar annotations-13.0.jar javax.json-api-1.1.2.jar
-Main-Class: com.traderbook.platform.app.App
-
