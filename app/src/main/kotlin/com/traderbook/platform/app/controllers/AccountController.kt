@@ -1,8 +1,8 @@
 package com.traderbook.platform.app.controllers
 
+import com.traderbook.api.AccountType
 import com.traderbook.platform.app.events.AccountListRefreshEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
-import com.traderbook.platform.app.models.emuns.AccountType
 import com.traderbook.platform.app.models.emuns.Broker
 import com.traderbook.platform.app.models.emuns.StackPane
 import com.traderbook.platform.app.models.views.AccountView

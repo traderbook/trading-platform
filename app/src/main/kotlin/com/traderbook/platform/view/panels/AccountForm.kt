@@ -1,9 +1,9 @@
 package com.traderbook.platform.view.panels
 
+import com.traderbook.api.AccountType
 import com.traderbook.platform.app.controllers.AccountController
 import com.traderbook.platform.app.controllers.StackPaneController
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
-import com.traderbook.platform.app.models.emuns.AccountType
 import com.traderbook.platform.app.models.emuns.Broker
 import com.traderbook.platform.app.models.emuns.StackPane
 import javafx.collections.FXCollections

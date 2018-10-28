@@ -1,6 +1,6 @@
 package com.traderbook.platform.app.models.views
 
-import com.traderbook.platform.app.models.emuns.AccountType
+import com.traderbook.api.AccountType
 import com.traderbook.platform.app.models.emuns.Broker
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
