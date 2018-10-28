@@ -31,6 +31,8 @@ repositories {
 }
 
 dependencies {
+    compile project(":api")
+
     // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed
     compile group: 'org.jetbrains.exposed', name: 'exposed', version: '0.10.5'
 
