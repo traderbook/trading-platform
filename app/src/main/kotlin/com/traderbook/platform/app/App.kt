@@ -1,6 +1,7 @@
 package com.traderbook.platform.app
 
 
+import com.traderbook.platform.app.helpers.AppEnvironment
 import com.traderbook.platform.app.models.tables.Accounts
 import com.traderbook.platform.view.MainView
 import javafx.stage.Stage
@@ -16,8 +17,8 @@ import java.sql.Connection
 
 open class App : App(MainView::class, Styles::class) {
     override fun start(stage: Stage) {
-        if(!File("${System.getProperty("user.home")}/.traderbook/data").exists()) {
-            File("${System.getProperty("user.home")}/.traderbook/data").mkdirs()
+        if(!File("${System.getProperty("user.home")}/${AppEnvironment.getProperty("applicationDir")}/data").exists()) {
+            File("${System.getProperty("user.home")}/${AppEnvironment.getProperty("applicationDir")}/data").mkdirs()
         }
 
         Database.connect("jdbc:sqlite:${System.getProperty("user.home")}/.traderbook/data/data.db", "org.sqlite.JDBC")

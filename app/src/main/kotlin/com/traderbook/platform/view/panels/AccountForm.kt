@@ -1,9 +1,10 @@
 package com.traderbook.platform.view.panels
 
+import com.traderbook.api.AccountType
+import com.traderbook.api.interfaces.IConnector
 import com.traderbook.platform.app.controllers.AccountController
 import com.traderbook.platform.app.controllers.StackPaneController
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
-import com.traderbook.platform.app.models.emuns.AccountType
 import com.traderbook.platform.app.models.emuns.Broker
 import com.traderbook.platform.app.models.emuns.StackPane
 import javafx.collections.FXCollections
@@ -15,10 +16,10 @@ class AccountForm : View("My View") {
     private val stackPaneController: StackPaneController by inject()
     private val accountController: AccountController by inject()
 
-    private val brokers = FXCollections.observableArrayList(Broker.values().toList())
+    private val brokers = FXCollections.observableArrayList(accountController.connectorService.getConnectors().values)
     private var accountType = FXCollections.observableArrayList(AccountType.values().toList())
 
-    private var brokerField: ComboBox<Broker> by singleAssign()
+    private var brokerField: ComboBox<IConnector> by singleAssign()
     private var accountTypeField: ComboBox<AccountType> by singleAssign()
     private var usernameField: TextField by singleAssign()
     private var passwordField: TextField by singleAssign()
@@ -28,7 +29,7 @@ class AccountForm : View("My View") {
             field {
                 combobox(null, brokers) {
                     cellFormat {
-                        text = it.name
+                        text = it.getName()
                     }
 
                     brokerField = this

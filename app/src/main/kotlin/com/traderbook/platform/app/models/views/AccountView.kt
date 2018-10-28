@@ -1,6 +1,7 @@
 package com.traderbook.platform.app.models.views
 
-import com.traderbook.platform.app.models.emuns.AccountType
+import com.traderbook.api.AccountType
+import com.traderbook.api.interfaces.IConnector
 import com.traderbook.platform.app.models.emuns.Broker
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -8,11 +9,11 @@ import javafx.beans.property.SimpleStringProperty
 
 import tornadofx.*
 
-class AccountView(id: Int, broker: Broker, accountType: AccountType, username: String, password: String, accountId: String) {
+class AccountView(id: Int, broker: IConnector, accountType: AccountType, username: String, password: String, accountId: String) {
     val idProperty = SimpleIntegerProperty(this, "id", id)
     var id by idProperty
 
-    val brokerProperty = SimpleObjectProperty<Broker>(this, "broker", broker)
+    val brokerProperty = SimpleObjectProperty<IConnector>(this, "broker", broker)
     var broker by brokerProperty
 
     val accountTypeProperty = SimpleObjectProperty<AccountType>(this, "accountType", accountType)

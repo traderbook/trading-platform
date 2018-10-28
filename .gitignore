@@ -4,6 +4,7 @@ out
 /app/build/
 /api/build/
 .gradle
+/dist/
 
 # Ignore Gradle GUI config
 gradle-app.setting

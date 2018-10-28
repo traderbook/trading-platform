@@ -1,12 +1,13 @@
 package com.traderbook.platform.app.controllers
 
+import com.traderbook.api.AccountType
+import com.traderbook.api.interfaces.IConnector
 import com.traderbook.platform.app.events.AccountListRefreshEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
-import com.traderbook.platform.app.models.emuns.AccountType
-import com.traderbook.platform.app.models.emuns.Broker
 import com.traderbook.platform.app.models.emuns.StackPane
 import com.traderbook.platform.app.models.views.AccountView
 import com.traderbook.platform.app.services.AccountService
+import com.traderbook.platform.app.services.ConnectorService
 import tornadofx.*
 
 class AccountController : Controller() {
@@ -14,15 +15,28 @@ class AccountController : Controller() {
     private val accountService = AccountService()
 
     val accountList = arrayListOf<AccountView>().observable()
+    val connectorService = ConnectorService()
+
     var accountIndex: Int? = null
 
     /**
-     * Permet de charger la liste des comptes de trading enregistrés dans la base de données
+     * Permet de :
+     * - charger les connectors installés sur la plate-forme de trading
+     * - charger la liste des comptes de trading enregistrés dans la base de données
      */
     init {
+        connectorService.load()
+
         runLater {
             accountService.read().forEach {
-                accountList.add(AccountView(it.id.value, Broker.valueOf(it.broker), AccountType.valueOf(it.accountType), it.username, it.password, it.accountId))
+                accountList.add(AccountView(
+                        it.id.value,
+                        connectorService.getConnector(it.broker)!!,
+                        AccountType.valueOf(it.accountType),
+                        it.username,
+                        it.password,
+                        it.accountId
+                ))
             }
         }
     }
@@ -41,11 +55,11 @@ class AccountController : Controller() {
     /**
      * Permet de lancer le processus de connexion d'un compte de trading
      */
-    fun connection(id: Int?, broker: Broker, accountType: AccountType, username: String, password: String) {
+    fun connection(id: Int?, broker: IConnector, accountType: AccountType, username: String, password: String) {
         if (id != null) {
             val account = accountService.update(
                     id,
-                    "$broker",
+                    broker.getName(),
                     "$accountType",
                     username,
                     password
@@ -61,7 +75,7 @@ class AccountController : Controller() {
             val accountId = "ZERTYUI"
 
             val account = accountService.create(
-                    broker.toString(),
+                    broker.getName(),
                     accountType.toString(),
                     username,
                     password,
