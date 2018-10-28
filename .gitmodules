@@ -1,0 +1,3 @@
+[submodule "connectors/lmax-connector"]
+	path = connectors/lmax-connector
+	url = git@github.com:traderbook/lmax-connector.git

@@ -3,4 +3,5 @@ rootProject.name = 'trading-platform'
 include 'app'
 include 'api'
 include 'connectors'
+include 'connectors:lmax-connector'
 
