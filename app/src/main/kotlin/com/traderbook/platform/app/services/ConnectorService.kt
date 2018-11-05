@@ -5,33 +5,57 @@ import com.traderbook.platform.app.helpers.AppEnvironment
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.jar.Manifest
 
 class ConnectorService {
     private val connectorsPath = "${System.getProperty("user.home")}/${AppEnvironment.getProperty("applicationDir")}/connectors"
-    private val connectors = mutableMapOf<String, IConnector>()
+    private val connectors = mutableMapOf<String, Class<*>>()
 
     fun load() {
         var urlLoader: URLClassLoader? = null
 
-        File(connectorsPath).listFiles().forEach {
-            urlLoader = URLClassLoader(arrayOf(
-                    URL("jar:file://${it.path}!/")
-            ))
+        val listFiles = File(connectorsPath).listFiles()
+
+        if(listFiles == null) {
+            println("Empty list files")
+        } else {
+            listFiles.forEach {
+                urlLoader = URLClassLoader(arrayOf(
+                        URL("jar:file://${it.path}!/")
+                ))
+            }
+
+            val resources = urlLoader!!.loadClass("com.traderbook.connector.Connector").classLoader.getResources("META-INF/MANIFEST.MF")
+
+            for(resource in resources) {
+                val manifest = Manifest(resource.openStream())
+
+                if(manifest.mainAttributes.getValue("Title") != null) {
+
+                    connectors.put(
+                            manifest.mainAttributes.getValue("Title"),
+                            urlLoader!!.loadClass("com.traderbook.connector.Connector") as Class<*>
+                    )
+                }
+            }
         }
 
-        val connector = urlLoader!!.loadClass("com.traderbook.connector.Connector").newInstance() as IConnector
 
-        connectors.put(
-                connector.getName(),
-                connector
-        )
+
+
+//        val connector = urlLoader!!.loadClass("com.traderbook.connector.Connector").newInstance() as IConnector
+//
+//        connectors.put(
+//                connector.getName(),
+//                connector
+//        )
     }
 
-    fun getConnectors(): MutableMap<String, IConnector> {
-        return connectors
+    fun getConnectors(): MutableCollection<String> {
+        return connectors.keys
     }
 
     fun getConnector(name: String): IConnector? {
-        return connectors[name]
+        return connectors[name] as IConnector
     }
 }

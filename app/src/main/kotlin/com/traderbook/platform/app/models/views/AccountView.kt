@@ -9,11 +9,11 @@ import javafx.beans.property.SimpleStringProperty
 
 import tornadofx.*
 
-class AccountView(id: Int, broker: IConnector, accountType: AccountType, username: String, password: String, accountId: String) {
+class AccountView(id: Int, broker: String, accountType: AccountType, username: String, password: String, accountId: String) {
     val idProperty = SimpleIntegerProperty(this, "id", id)
     var id by idProperty
 
-    val brokerProperty = SimpleObjectProperty<IConnector>(this, "broker", broker)
+    val brokerProperty = SimpleObjectProperty<String>(this, "broker", broker)
     var broker by brokerProperty
 
     val accountTypeProperty = SimpleObjectProperty<AccountType>(this, "accountType", accountType)
