@@ -14,4 +14,6 @@ class Account(id: EntityID<Int>) : IntEntity(id) {
     var password by Accounts.password
     var accountId by Accounts.accountId
     var isAuthenticated by Accounts.isAuthenticated
+
+
 }

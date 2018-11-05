@@ -1,12 +1,9 @@
 package com.traderbook.platform.view.panels
 
 import com.traderbook.api.AccountType
-import com.traderbook.api.interfaces.IConnector
 import com.traderbook.platform.app.controllers.AccountController
 import com.traderbook.platform.app.controllers.StackPaneController
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
-import com.traderbook.platform.app.models.emuns.Broker
-import com.traderbook.platform.app.models.emuns.StackPane
 import javafx.collections.FXCollections
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
@@ -74,37 +71,26 @@ class AccountForm : View("My View") {
 
             button("CONNECTION") {
                 action {
-                    accountController.connection(
-                            null,
-                            brokerField.value,
-                            accountTypeField.value,
-                            usernameField.text,
-                            passwordField.text
-                    )
-
-//                    if (accountController.accountIndex != null) {
-//                        accountController.connection(
-//                                accountController.accountList[accountController.accountIndex!!].id,
-//                                brokerField.value,
-//                                accountTypeField.value,
-//                                usernameField.text,
-//                                passwordField.text
-//                        )
-//                    } else {
-//                        accountController.connection(
-//                                null,
-//                                brokerField.value,
-//                                accountTypeField.value,
-//                                usernameField.text,
-//                                passwordField.text
-//                        )
-//                    }
-
+                    if (accountController.accountIndex != null) {
+                        accountController.connection(
+                                accountController.getAccountId(),
+                                brokerField.value,
+                                accountTypeField.value,
+                                usernameField.text,
+                                passwordField.text
+                        )
+                    } else {
+                        accountController.connection(
+                                null,
+                                brokerField.value,
+                                accountTypeField.value,
+                                usernameField.text,
+                                passwordField.text
+                        )
+                    }
 
                     usernameField.text = null
                     passwordField.text = null
-
-//                    stackPaneController.selectPane(StackPane.DASHBOARD)
                 }
             }
         }
