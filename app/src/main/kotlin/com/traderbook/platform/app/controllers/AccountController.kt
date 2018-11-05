@@ -1,7 +1,6 @@
 package com.traderbook.platform.app.controllers
 
 import com.traderbook.api.AccountType
-import com.traderbook.api.interfaces.IConnector
 import com.traderbook.platform.app.events.AccountListRefreshEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import com.traderbook.platform.app.models.emuns.StackPane
@@ -43,6 +42,30 @@ class AccountController : Controller() {
     }
 
     /**
+     * Initialise toutes les propriété isAuthenticated des models AccountView à false
+     */
+    private fun resetAccountView() {
+        accountList.forEach {
+            it.isAuthenticatedProperty.value = false
+        }
+    }
+
+    /**
+     * Permet de rafraichir la liste des comptes de trading après une modification via le formulaire de connexion
+     */
+    private fun refreshAccountList() {
+        fire(AccountListRefreshEvent())
+        stackPaneController.selectPane(StackPane.DASHBOARD)
+    }
+
+    /**
+     * Permet de retourner l'id du compte selectionné
+     */
+    fun getAccountId(): Int {
+        return accountList[accountIndex!!].id
+    }
+
+    /**
      * Permet de sélectionner un compte de trading et d'afficher le formulaire de connexion
      */
     fun selectItem(index: Int) {
@@ -57,63 +80,51 @@ class AccountController : Controller() {
      * Permet de lancer le processus de connexion d'un compte de trading
      */
     fun connection(id: Int?, broker: String, accountType: AccountType, username: String, password: String) {
-        val account = accountService.create(
-                broker,
-                "$accountType",
-                username,
-                password,
-                ""
-        )
+        if (id != null) {
+            val account = accountService.update(
+                    id,
+                    broker,
+                    "$accountType",
+                    username,
+                    password
+            )
 
-        if(account != null) {
-            accountList.forEach {
-                it.isAuthenticatedProperty.value = false
+            if (account != null) {
+                resetAccountView()
+
+                accountList[accountIndex!!].broker = account.broker
+                accountList[accountIndex!!].accountType = AccountType.valueOf(account.accountType)
+                accountList[accountIndex!!].username = account.username
+                accountList[accountIndex!!].password = account.password
+                accountList[accountIndex!!].isAuthenticated = account.isAuthenticated
+
+                refreshAccountList()
             }
+        } else {
+            val account = accountService.create(
+                    broker,
+                    "$accountType",
+                    username,
+                    password,
+                    ""
+            )
 
-            accountList.add(AccountView(
-                    account.id.value,
-                    account.broker,
-                    AccountType.valueOf(account.accountType),
-                    account.username,
-                    account.password,
-                    account.accountId,
-                    account.isAuthenticated
-            ))
+            if (account != null) {
+                resetAccountView()
 
-            fire(OpenConnectionFormEvent())
-            stackPaneController.selectPane(StackPane.DASHBOARD)
+                accountList.add(AccountView(
+                        account.id.value,
+                        account.broker,
+                        AccountType.valueOf(account.accountType),
+                        account.username,
+                        account.password,
+                        account.accountId,
+                        account.isAuthenticated
+                ))
+
+                refreshAccountList()
+            }
         }
-
-//        if (id != null) {
-//            val account = accountService.update(
-//                    id,
-//                    broker,
-//                    "$accountType",
-//                    username,
-//                    password
-//            )
-//
-//            if (account != null) {
-//                accountList[accountIndex!!].broker = broker
-//                accountList[accountIndex!!].accountType = accountType
-//                accountList[accountIndex!!].username = username
-//                accountList[accountIndex!!].password = password
-//            }
-//        } else {
-//            val accountId = "ZERTYUI"
-//
-//            val account = accountService.create(
-//                    broker,
-//                    accountType.toString(),
-//                    username,
-//                    password,
-//                    accountId
-//            )
-//
-//            accountList.add(AccountView(account!!.id.value, broker, accountType, username, password, accountId))
-//        }
-//
-//        fire(AccountListRefreshEvent())
     }
 
     /**

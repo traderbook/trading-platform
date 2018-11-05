@@ -48,6 +48,10 @@ class AccountService {
         var account: Account? = null
 
         transaction {
+            Account.all().forEach {
+                it.isAuthenticated = false
+            }
+
             account = Account.findById(id)
 
             if (account != null) {
@@ -55,6 +59,7 @@ class AccountService {
                 account!!.accountType = accountType
                 account!!.username = username
                 account!!.password = password
+                account!!.isAuthenticated = true
             }
         }
 
