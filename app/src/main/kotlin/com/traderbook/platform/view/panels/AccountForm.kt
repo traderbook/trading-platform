@@ -16,10 +16,10 @@ class AccountForm : View("My View") {
     private val stackPaneController: StackPaneController by inject()
     private val accountController: AccountController by inject()
 
-    private val brokers = FXCollections.observableArrayList(accountController.connectorService.getConnectors().values)
+    private val brokers = FXCollections.observableArrayList(accountController.connectorService.getConnectors())
     private var accountType = FXCollections.observableArrayList(AccountType.values().toList())
 
-    private var brokerField: ComboBox<IConnector> by singleAssign()
+    private var brokerField: ComboBox<String> by singleAssign()
     private var accountTypeField: ComboBox<AccountType> by singleAssign()
     private var usernameField: TextField by singleAssign()
     private var passwordField: TextField by singleAssign()
@@ -29,7 +29,7 @@ class AccountForm : View("My View") {
             field {
                 combobox(null, brokers) {
                     cellFormat {
-                        text = it.getName()
+                        text = it
                     }
 
                     brokerField = this

@@ -31,7 +31,7 @@ class AccountController : Controller() {
             accountService.read().forEach {
                 accountList.add(AccountView(
                         it.id.value,
-                        connectorService.getConnector(it.broker)!!,
+                        it.broker,
                         AccountType.valueOf(it.accountType),
                         it.username,
                         it.password,
@@ -55,11 +55,11 @@ class AccountController : Controller() {
     /**
      * Permet de lancer le processus de connexion d'un compte de trading
      */
-    fun connection(id: Int?, broker: IConnector, accountType: AccountType, username: String, password: String) {
+    fun connection(id: Int?, broker: String, accountType: AccountType, username: String, password: String) {
         if (id != null) {
             val account = accountService.update(
                     id,
-                    broker.getName(),
+                    broker,
                     "$accountType",
                     username,
                     password
@@ -75,7 +75,7 @@ class AccountController : Controller() {
             val accountId = "ZERTYUI"
 
             val account = accountService.create(
-                    broker.getName(),
+                    broker,
                     accountType.toString(),
                     username,
                     password,
