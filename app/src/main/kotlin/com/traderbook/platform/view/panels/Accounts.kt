@@ -11,7 +11,13 @@ class Accounts : View("Accounts read") {
     override val root = vbox {
         listview(accountController.accountList) {
             cellFormat {
-                text = it.usernameProperty.value
+                var content = it.usernameProperty.value
+
+                if(it.isAuthenticatedProperty.value == true) {
+                    content += " (CONNECTED)"
+                }
+
+                text = content
             }
 
             onUserSelect {
