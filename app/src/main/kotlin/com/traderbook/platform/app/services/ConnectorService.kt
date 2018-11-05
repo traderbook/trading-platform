@@ -1,6 +1,5 @@
 package com.traderbook.platform.app.services
 
-import com.traderbook.api.interfaces.IConnector
 import com.traderbook.platform.app.helpers.AppEnvironment
 import java.io.File
 import java.net.URL
@@ -39,23 +38,13 @@ class ConnectorService {
                 }
             }
         }
-
-
-
-
-//        val connector = urlLoader!!.loadClass("com.traderbook.connector.Connector").newInstance() as IConnector
-//
-//        connectors.put(
-//                connector.getName(),
-//                connector
-//        )
     }
 
     fun getConnectors(): MutableCollection<String> {
         return connectors.keys
     }
 
-    fun getConnector(name: String): IConnector? {
-        return connectors[name] as IConnector
+    fun getConnector(name: String): Class<*>? {
+        return connectors[name]
     }
 }
