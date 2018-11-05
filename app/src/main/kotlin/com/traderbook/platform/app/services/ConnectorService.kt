@@ -39,6 +39,16 @@ class ConnectorService {
                 }
             }
         }
+
+
+
+
+//        val connector = urlLoader!!.loadClass("com.traderbook.connector.Connector").newInstance() as IConnector
+//
+//        connectors.put(
+//                connector.getName(),
+//                connector
+//        )
     }
 
     fun getConnectors(): MutableCollection<String> {
@@ -46,6 +56,6 @@ class ConnectorService {
     }
 
     fun getConnector(name: String): IConnector? {
-        return connectors[name] as IConnector
+        return connectors[name]
     }
 }
