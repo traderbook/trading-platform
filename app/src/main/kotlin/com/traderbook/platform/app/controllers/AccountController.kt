@@ -124,12 +124,14 @@ class AccountController : Controller() {
     }
 
     /**
-     * Permet de supprimer un compte de trading et de le déconnecter avant
+     * Permet de supprimer un compte de trading
      */
     fun deleteAccount(account: AccountView) {
         accountService.delete(account.id)
 
         accountList.remove(account)
+
+        fire(OpenConnectionFormEvent())
     }
 
     /**
