@@ -74,29 +74,37 @@ class AccountForm : View("My View") {
 
             button("CONNECTION") {
                 action {
-                    if (accountController.accountIndex != null) {
-                        accountController.connection(
-                                accountController.accountList[accountController.accountIndex!!].id,
-                                brokerField.value,
-                                accountTypeField.value,
-                                usernameField.text,
-                                passwordField.text
-                        )
-                    } else {
-                        accountController.connection(
-                                null,
-                                brokerField.value,
-                                accountTypeField.value,
-                                usernameField.text,
-                                passwordField.text
-                        )
-                    }
+                    accountController.connection(
+                            null,
+                            brokerField.value,
+                            accountTypeField.value,
+                            usernameField.text,
+                            passwordField.text
+                    )
+
+//                    if (accountController.accountIndex != null) {
+//                        accountController.connection(
+//                                accountController.accountList[accountController.accountIndex!!].id,
+//                                brokerField.value,
+//                                accountTypeField.value,
+//                                usernameField.text,
+//                                passwordField.text
+//                        )
+//                    } else {
+//                        accountController.connection(
+//                                null,
+//                                brokerField.value,
+//                                accountTypeField.value,
+//                                usernameField.text,
+//                                passwordField.text
+//                        )
+//                    }
 
 
                     usernameField.text = null
                     passwordField.text = null
 
-                    stackPaneController.selectPane(StackPane.DASHBOARD)
+//                    stackPaneController.selectPane(StackPane.DASHBOARD)
                 }
             }
         }

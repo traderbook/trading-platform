@@ -24,12 +24,17 @@ class AccountService {
         var account: Account? = null
 
         transaction {
+            Account.all().forEach {
+                it.isAuthenticated = false
+            }
+
             account = Account.new {
                 this.broker = broker
                 this.accountType = accountType
                 this.username = username
                 this.password = password
                 this.accountId = accountId
+                this.isAuthenticated = true
             }
         }
 

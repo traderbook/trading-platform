@@ -8,4 +8,5 @@ object Accounts : IntIdTable() {
     val username = varchar("username", 50)
     val password = varchar("password", 50)
     val accountId = varchar("account_id", 50)
+    val isAuthenticated = bool("is_authenticated")
 }

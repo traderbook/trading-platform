@@ -35,7 +35,8 @@ class AccountController : Controller() {
                         AccountType.valueOf(it.accountType),
                         it.username,
                         it.password,
-                        it.accountId
+                        it.accountId,
+                        it.isAuthenticated
                 ))
             }
         }
@@ -56,36 +57,63 @@ class AccountController : Controller() {
      * Permet de lancer le processus de connexion d'un compte de trading
      */
     fun connection(id: Int?, broker: String, accountType: AccountType, username: String, password: String) {
-        if (id != null) {
-            val account = accountService.update(
-                    id,
-                    broker,
-                    "$accountType",
-                    username,
-                    password
-            )
+        val account = accountService.create(
+                broker,
+                "$accountType",
+                username,
+                password,
+                ""
+        )
 
-            if (account != null) {
-                accountList[accountIndex!!].broker = broker
-                accountList[accountIndex!!].accountType = accountType
-                accountList[accountIndex!!].username = username
-                accountList[accountIndex!!].password = password
+        if(account != null) {
+            accountList.forEach {
+                it.isAuthenticatedProperty.value = false
             }
-        } else {
-            val accountId = "ZERTYUI"
 
-            val account = accountService.create(
-                    broker,
-                    accountType.toString(),
-                    username,
-                    password,
-                    accountId
-            )
+            accountList.add(AccountView(
+                    account.id.value,
+                    account.broker,
+                    AccountType.valueOf(account.accountType),
+                    account.username,
+                    account.password,
+                    account.accountId,
+                    account.isAuthenticated
+            ))
 
-            accountList.add(AccountView(account!!.id.value, broker, accountType, username, password, accountId))
+            fire(OpenConnectionFormEvent())
+            stackPaneController.selectPane(StackPane.DASHBOARD)
         }
 
-        fire(AccountListRefreshEvent())
+//        if (id != null) {
+//            val account = accountService.update(
+//                    id,
+//                    broker,
+//                    "$accountType",
+//                    username,
+//                    password
+//            )
+//
+//            if (account != null) {
+//                accountList[accountIndex!!].broker = broker
+//                accountList[accountIndex!!].accountType = accountType
+//                accountList[accountIndex!!].username = username
+//                accountList[accountIndex!!].password = password
+//            }
+//        } else {
+//            val accountId = "ZERTYUI"
+//
+//            val account = accountService.create(
+//                    broker,
+//                    accountType.toString(),
+//                    username,
+//                    password,
+//                    accountId
+//            )
+//
+//            accountList.add(AccountView(account!!.id.value, broker, accountType, username, password, accountId))
+//        }
+//
+//        fire(AccountListRefreshEvent())
     }
 
     /**
