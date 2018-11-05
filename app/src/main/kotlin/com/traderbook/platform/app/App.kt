@@ -17,11 +17,13 @@ import java.sql.Connection
 
 open class App : App(MainView::class, Styles::class) {
     override fun start(stage: Stage) {
+        val dbNameFile = AppEnvironment.getProperty("databaseFile")
+
         if(!File("${System.getProperty("user.home")}/${AppEnvironment.getProperty("applicationDir")}/data").exists()) {
             File("${System.getProperty("user.home")}/${AppEnvironment.getProperty("applicationDir")}/data").mkdirs()
         }
 
-        Database.connect("jdbc:sqlite:${System.getProperty("user.home")}/.traderbook/data/data.db", "org.sqlite.JDBC")
+        Database.connect("jdbc:sqlite:${System.getProperty("user.home")}/.traderbook/data/$dbNameFile.db", "org.sqlite.JDBC")
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
         transaction {
