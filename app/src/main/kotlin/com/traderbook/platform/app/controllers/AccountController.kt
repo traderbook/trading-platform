@@ -149,7 +149,9 @@ class AccountController : Controller() {
      * Permet de déconnecter un compte de trading
      */
     fun logout(account: AccountView) {
-        println("Tu n'a pas encore déconnecter un compte")
-        println(account.toString())
+        accountService.disconnect(account.id)
+
+        resetAccountView()
+        refreshAccountList()
     }
 }

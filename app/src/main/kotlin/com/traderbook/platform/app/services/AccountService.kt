@@ -74,4 +74,14 @@ class AccountService {
             Account.findById(id)!!.delete()
         }
     }
+
+    fun disconnect(id: Int) {
+        transaction {
+            val account = Account.findById(id)
+
+            if(account != null) {
+                account.isAuthenticated = false
+            }
+        }
+    }
 }
