@@ -2,6 +2,7 @@ package com.traderbook.platform.view.panels
 
 import com.traderbook.platform.app.controllers.AccountController
 import com.traderbook.platform.app.events.AccountListRefreshEvent
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.control.SelectionMode
 import tornadofx.*
 
@@ -13,7 +14,7 @@ class Accounts : View("Accounts read") {
             cellFormat {
                 var content = it.usernameProperty.value
 
-                if(it.isAuthenticatedProperty.value == true) {
+                if (it.isAuthenticatedProperty.value == true) {
                     content += " (CONNECTED)"
                 }
 
@@ -24,22 +25,32 @@ class Accounts : View("Accounts read") {
                 accountController.selectItem(selectionModel.selectedIndex)
             }
 
-            contextmenu {
-                item("ADD").action {
-                    accountController.addAccount()
-                }
-
-                item("DELETE").action {
-                    selectedItem?.let {
-                        accountController.deleteAccount(it)
+            val ctxMenu = contextmenu {
+                item("ADD") {
+                    action {
+                        accountController.addAccount()
                     }
                 }
 
-                item("LOGOUT").action {
-                    selectedItem?.let {
-                        accountController.logout(it)
+                item("DELETE") {
+                    action {
+                        selectedItem?.let {
+                            accountController.deleteAccount(it)
+                        }
                     }
                 }
+
+                item("LOGOUT") {
+                    action {
+                        selectedItem?.let {
+                            accountController.logout(it)
+                        }
+                    }
+                }
+            }
+
+            onUserSelect(1) {
+                ctxMenu.items.get(2).disableProperty().bind(!it.isAuthenticatedProperty)
             }
 
             placeholder = label("EMPTY LIST CLICK ADD ACCOUNT")
@@ -49,11 +60,11 @@ class Accounts : View("Accounts read") {
             subscribe<AccountListRefreshEvent> {
                 refresh()
             }
-        }
 
-        button("ADD ACCOUNT") {
-            action {
-                accountController.addAccount()
+            button("ADD ACCOUNT") {
+                action {
+                    accountController.addAccount()
+                }
             }
         }
     }
