@@ -4,7 +4,6 @@ import com.traderbook.api.AccountType
 import com.traderbook.api.enums.Messages
 import com.traderbook.api.interfaces.IConnectorObserver
 import com.traderbook.platform.app.events.AccountListRefreshEvent
-import com.traderbook.platform.app.events.AlertEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.emuns.StackPane
@@ -31,17 +30,17 @@ class AccountController : Controller(), IConnectorObserver {
         connectorService.load()
 
         runLater {
-//            accountService.read().forEach {
-//                accountList.add(AccountView(
-//                        it.id.value,
-//                        it.broker,
-//                        AccountType.valueOf(it.accountType),
-//                        it.username,
-//                        it.password,
-//                        it.accountId,
-//                        it.isAuthenticated
-//                ))
-//            }
+            connectorService.getAccounts().forEach {
+                accountList.add(AccountView(
+                        it.id.value,
+                        it.broker,
+                        AccountType.valueOf(it.accountType),
+                        it.username,
+                        it.password,
+                        it.accountId,
+                        it.isAuthenticated
+                ))
+            }
         }
     }
 
@@ -171,7 +170,7 @@ class AccountController : Controller(), IConnectorObserver {
     override fun update(message: Messages, data: Any?) {
         message.also(::println)
         when(message) {
-            Messages.SUCCESS_LOGIN -> {
+            Messages.SUCCESS_LOGIN_ACCOUNT_CREATED -> {
                 val account = data as Account
 
                 accountList.add(AccountView(
@@ -186,8 +185,16 @@ class AccountController : Controller(), IConnectorObserver {
 
                 refreshAccountList()
             }
-            Messages.BAD_CREDENTIALS -> {
-                fire(AlertEvent("WRONG CREDENTIALS"))
+            Messages.SUCCESS_LOGIN -> {
+                val account = data as Account
+
+                accountList.forEach {
+                    if(it.id == account.id.value) {
+                        it.isAuthenticatedProperty.value = true
+                    }
+                }
+
+                refreshAccountList()
             }
         }
     }
