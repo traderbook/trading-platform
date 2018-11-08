@@ -1,6 +1,8 @@
 package com.traderbook.platform.app.services
 
 import com.traderbook.platform.app.models.Account
+import com.traderbook.platform.app.models.tables.Accounts
+import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class AccountService {
@@ -73,6 +75,22 @@ class AccountService {
         transaction {
             Account.findById(id)!!.delete()
         }
+    }
+
+    fun getAccountByAccountId(accountId: String): Account? {
+        var account: Account? = null
+
+        transaction {
+            val accounts = Account.find {
+                Accounts.accountId eq accountId
+            }
+
+            if(!accounts.empty()) {
+                account = accounts.first()
+            }
+        }
+
+        return account
     }
 
     fun disconnect(id: Int) {
