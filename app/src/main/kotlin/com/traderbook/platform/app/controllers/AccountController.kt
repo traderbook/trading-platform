@@ -4,6 +4,7 @@ import com.traderbook.api.AccountType
 import com.traderbook.api.enums.Messages
 import com.traderbook.api.interfaces.IConnectorObserver
 import com.traderbook.platform.app.events.AccountListRefreshEvent
+import com.traderbook.platform.app.events.AlertEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.emuns.StackPane
@@ -184,6 +185,9 @@ class AccountController : Controller(), IConnectorObserver {
                 ))
 
                 refreshAccountList()
+            }
+            Messages.BAD_CREDENTIALS -> {
+                fire(AlertEvent("WRONG CREDENTIALS"))
             }
         }
     }
