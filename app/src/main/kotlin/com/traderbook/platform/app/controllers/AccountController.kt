@@ -3,6 +3,7 @@ package com.traderbook.platform.app.controllers
 import com.traderbook.api.AccountType
 import com.traderbook.api.enums.Messages
 import com.traderbook.api.interfaces.IConnectorObserver
+import com.traderbook.api.models.BrokerAccount
 import com.traderbook.platform.app.events.AccountListRefreshEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import com.traderbook.platform.app.models.Account
@@ -14,7 +15,6 @@ import tornadofx.*
 
 class AccountController : Controller(), IConnectorObserver {
     private val stackPaneController: StackPaneController by inject()
-//    private val accountService = AccountService()
 
     val accountList = arrayListOf<AccountView>().observable()
     val connectorService = ConnectorService(this)
@@ -160,11 +160,8 @@ class AccountController : Controller(), IConnectorObserver {
     /**
      * Permet de déconnecter un compte de trading
      */
-    fun logout(account: AccountView) {
-//        accountService.disconnect(account.id)
-
-        resetAccountView()
-        refreshAccountList()
+    fun logout() {
+        connectorService.stop()
     }
 
     override fun update(message: Messages, data: Any?) {
@@ -196,6 +193,19 @@ class AccountController : Controller(), IConnectorObserver {
 
                 refreshAccountList()
             }
+            Messages.LOGOUT_SUCCESS -> {
+                val account = data as BrokerAccount
+
+                accountList.forEach {
+                    if(it.accountId == account.accountId) {
+                        it.isAuthenticatedProperty.value = false
+                    }
+                }
+
+                resetAccountView()
+                refreshAccountList()
+            }
+            Messages.LOGOUT_FAILURE -> { }
         }
     }
 }
