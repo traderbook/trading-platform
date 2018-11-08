@@ -6,6 +6,8 @@ import com.traderbook.api.interfaces.IConnector
 import com.traderbook.api.interfaces.IConnectorObserver
 import com.traderbook.api.models.BrokerAccount
 import com.traderbook.platform.app.helpers.AppEnvironment
+import com.traderbook.platform.app.models.Account
+import tornadofx.*
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
@@ -47,6 +49,28 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
                 }
             }
         }
+    }
+
+    fun getAccounts(): List<Account> {
+        val accounts = accountService.read()
+
+        runLater {
+            accounts.forEach {
+                if(it.isAuthenticated) {
+                    initializeConnector(it.broker)
+
+                    connection(
+                            AccountType.valueOf(it.accountType),
+                            it.username,
+                            it.password
+                    )
+
+                    start()
+                }
+            }
+        }
+
+        return accounts
     }
 
     fun getConnectors(): MutableCollection<String> {
@@ -93,13 +117,15 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
                 val account = accountService.getAccountByAccountId(brokerAccount.accountId)
 
                 if(account == null) {
-                    controller.update(message, accountService.create(
+                    controller.update(Messages.SUCCESS_LOGIN_ACCOUNT_CREATED, accountService.create(
                             this.name!!,
                             this.accountType!!.toString(),
                             this.username!!,
                             this.password!!,
                             brokerAccount.accountId
                     ))
+                } else {
+                    controller.update(message, account)
                 }
             }
             Messages.AUTHENTICATION_FAILED -> println("Bad")

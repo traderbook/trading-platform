@@ -30,17 +30,17 @@ class AccountController : Controller(), IConnectorObserver {
         connectorService.load()
 
         runLater {
-//            accountService.read().forEach {
-//                accountList.add(AccountView(
-//                        it.id.value,
-//                        it.broker,
-//                        AccountType.valueOf(it.accountType),
-//                        it.username,
-//                        it.password,
-//                        it.accountId,
-//                        it.isAuthenticated
-//                ))
-//            }
+            connectorService.getAccounts().forEach {
+                accountList.add(AccountView(
+                        it.id.value,
+                        it.broker,
+                        AccountType.valueOf(it.accountType),
+                        it.username,
+                        it.password,
+                        it.accountId,
+                        it.isAuthenticated
+                ))
+            }
         }
     }
 
@@ -170,7 +170,7 @@ class AccountController : Controller(), IConnectorObserver {
     override fun update(message: Messages, data: Any?) {
         message.also(::println)
         when(message) {
-            Messages.SUCCESS_LOGIN -> {
+            Messages.SUCCESS_LOGIN_ACCOUNT_CREATED -> {
                 val account = data as Account
 
                 accountList.add(AccountView(
@@ -182,6 +182,17 @@ class AccountController : Controller(), IConnectorObserver {
                         account.accountId,
                         account.isAuthenticated
                 ))
+
+                refreshAccountList()
+            }
+            Messages.SUCCESS_LOGIN -> {
+                val account = data as Account
+
+                accountList.forEach {
+                    if(it.id == account.id.value) {
+                        it.isAuthenticatedProperty.value = true
+                    }
+                }
 
                 refreshAccountList()
             }
