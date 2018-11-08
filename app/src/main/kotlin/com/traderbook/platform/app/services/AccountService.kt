@@ -93,11 +93,16 @@ class AccountService {
         return account
     }
 
-    fun disconnect(id: Int) {
+    fun disconnect(accountId: String) {
         transaction {
-            val account = Account.findById(id)
+            var account: Account? = null
 
-            if(account != null) {
+            val accounts = Account.find {
+                Accounts.accountId eq accountId
+            }
+
+            if(!accounts.empty()) {
+                account = accounts.first()
                 account.isAuthenticated = false
             }
         }

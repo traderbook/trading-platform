@@ -42,7 +42,7 @@ class Accounts : View("Accounts read") {
                 item("LOGOUT") {
                     action {
                         selectedItem?.let {
-                            accountController.logout(it)
+                            accountController.logout()
                         }
                     }
                 }

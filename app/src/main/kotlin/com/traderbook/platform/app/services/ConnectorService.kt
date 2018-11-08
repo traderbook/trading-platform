@@ -106,7 +106,7 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
     }
 
     override fun stop() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        connector!!.stop()
     }
 
     override fun update(message: Messages, data: Any?) {
@@ -129,6 +129,14 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
                 }
             }
             Messages.BAD_CREDENTIALS -> controller.update(message, null)
+            Messages.LOGOUT_FAILURE -> controller.update(message, data)
+            Messages.LOGOUT_SUCCESS -> {
+                val account = data as BrokerAccount
+
+                accountService.disconnect(account.accountId)
+
+                controller.update(message, data)
+            }
             else -> println("Error occured")
         }
     }
