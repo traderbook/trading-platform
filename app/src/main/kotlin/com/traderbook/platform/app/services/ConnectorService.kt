@@ -128,7 +128,7 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
                     controller.update(message, account)
                 }
             }
-            Messages.AUTHENTICATION_FAILED -> println("Bad")
+            Messages.BAD_CREDENTIALS -> controller.update(message, null)
             else -> println("Error occured")
         }
     }

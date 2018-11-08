@@ -3,6 +3,8 @@ package com.traderbook.platform.view.panels
 import com.traderbook.api.AccountType
 import com.traderbook.platform.app.controllers.AccountController
 import com.traderbook.platform.app.controllers.StackPaneController
+import com.traderbook.platform.app.events.AccountListRefreshEvent
+import com.traderbook.platform.app.events.AlertEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import javafx.collections.FXCollections
 import javafx.scene.control.ComboBox
@@ -21,80 +23,98 @@ class AccountForm : View("My View") {
     private var usernameField: TextField by singleAssign()
     private var passwordField: TextField by singleAssign()
 
-    override val root = form {
-        fieldset {
-            field {
-                combobox(null, brokers) {
-                    cellFormat {
-                        text = it
-                    }
+    override val root = vbox {
+        label {
+            hide()
 
-                    brokerField = this
-
-                    selectionModel.selectFirst()
-                }
+            subscribe<AlertEvent> {
+                text = it.message
+                show()
             }
 
-            field {
-                combobox(null, accountType) {
-                    cellFormat {
-                        text = it.name
-                    }
-
-                    accountTypeField = this
-
-                    selectionModel.selectFirst()
-                }
-            }
-
-            field {
-                textfield {
-                    promptText = "USERNAME"
-                    usernameField = this
-                }
-            }
-
-            field {
-                textfield {
-                    promptText = "PASSWORD"
-                    passwordField = this
-                }
+            subscribe<AccountListRefreshEvent> {
+                text = ""
+                hide()
             }
         }
 
-        hbox {
-            button("CANCEL") {
-                action {
-                    stackPaneController.cancelConnection()
-                }
-            }
+        form {
+            fieldset {
+                field {
+                    combobox(null, brokers) {
+                        cellFormat {
+                            text = it
+                        }
 
-            button("CONNECTION") {
-                action {
-                    if (accountController.accountIndex != null) {
-                        accountController.connection(
-                                accountController.getAccountId(),
-                                brokerField.value,
-                                accountTypeField.value,
-                                usernameField.text,
-                                passwordField.text
-                        )
-                    } else {
-                        accountController.connection(
-                                null,
-                                brokerField.value,
-                                accountTypeField.value,
-                                usernameField.text,
-                                passwordField.text
-                        )
+                        brokerField = this
+
+                        selectionModel.selectFirst()
                     }
+                }
 
-                    usernameField.text = null
-                    passwordField.text = null
+                field {
+                    combobox(null, accountType) {
+                        cellFormat {
+                            text = it.name
+                        }
+
+                        accountTypeField = this
+
+                        selectionModel.selectFirst()
+                    }
+                }
+
+                field {
+                    textfield {
+                        promptText = "USERNAME"
+                        usernameField = this
+                    }
+                }
+
+                field {
+                    textfield {
+                        promptText = "PASSWORD"
+                        passwordField = this
+                    }
                 }
             }
-        }
 
+            hbox {
+                button("CANCEL") {
+                    action {
+                        stackPaneController.cancelConnection()
+                    }
+                }
+
+                button("CONNECTION") {
+                    action {
+                        if (accountController.accountIndex != null) {
+                            accountController.connection(
+                                    accountController.getAccountId(),
+                                    brokerField.value,
+                                    accountTypeField.value,
+                                    usernameField.text,
+                                    passwordField.text
+                            )
+                        } else {
+                            accountController.connection(
+                                    null,
+                                    brokerField.value,
+                                    accountTypeField.value,
+                                    usernameField.text,
+                                    passwordField.text
+                            )
+                        }
+
+                        subscribe<AccountListRefreshEvent> {
+                            usernameField.text = null
+                            passwordField.text = null
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     init {
