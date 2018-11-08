@@ -62,6 +62,7 @@ jar {
                 "Main-Class": mainClassName
         )
     }
+    
     from(configurations.compile.collect { entry -> zipTree(entry) }) {
         exclude "META-INF/MANIFEST.MF"
         exclude "META-INF/*.SF"

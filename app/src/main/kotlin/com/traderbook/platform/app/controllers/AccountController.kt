@@ -1,20 +1,23 @@
 package com.traderbook.platform.app.controllers
 
 import com.traderbook.api.AccountType
+import com.traderbook.api.enums.Messages
+import com.traderbook.api.interfaces.IConnectorObserver
 import com.traderbook.platform.app.events.AccountListRefreshEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
+import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.emuns.StackPane
 import com.traderbook.platform.app.models.views.AccountView
 import com.traderbook.platform.app.services.AccountService
 import com.traderbook.platform.app.services.ConnectorService
 import tornadofx.*
 
-class AccountController : Controller() {
+class AccountController : Controller(), IConnectorObserver {
     private val stackPaneController: StackPaneController by inject()
-    private val accountService = AccountService()
+//    private val accountService = AccountService()
 
     val accountList = arrayListOf<AccountView>().observable()
-    val connectorService = ConnectorService()
+    val connectorService = ConnectorService(this)
 
     var accountIndex: Int? = null
 
@@ -27,17 +30,17 @@ class AccountController : Controller() {
         connectorService.load()
 
         runLater {
-            accountService.read().forEach {
-                accountList.add(AccountView(
-                        it.id.value,
-                        it.broker,
-                        AccountType.valueOf(it.accountType),
-                        it.username,
-                        it.password,
-                        it.accountId,
-                        it.isAuthenticated
-                ))
-            }
+//            accountService.read().forEach {
+//                accountList.add(AccountView(
+//                        it.id.value,
+//                        it.broker,
+//                        AccountType.valueOf(it.accountType),
+//                        it.username,
+//                        it.password,
+//                        it.accountId,
+//                        it.isAuthenticated
+//                ))
+//            }
         }
     }
 
@@ -80,37 +83,95 @@ class AccountController : Controller() {
      * Permet de lancer le processus de connexion d'un compte de trading
      */
     fun connection(id: Int?, broker: String, accountType: AccountType, username: String, password: String) {
-        if (id != null) {
-            val account = accountService.update(
-                    id,
-                    broker,
-                    "$accountType",
-                    username,
-                    password
-            )
+        connectorService.initializeConnector(broker)
 
-            if (account != null) {
-                resetAccountView()
+        connectorService.connection(
+                accountType,
+                username,
+                password
+        )
 
-                accountList[accountIndex!!].broker = account.broker
-                accountList[accountIndex!!].accountType = AccountType.valueOf(account.accountType)
-                accountList[accountIndex!!].username = account.username
-                accountList[accountIndex!!].password = account.password
-                accountList[accountIndex!!].isAuthenticated = account.isAuthenticated
+        connectorService.start()
+//        if (id != null) {
+//            val account = accountService.update(
+//                    id,
+//                    broker,
+//                    "$accountType",
+//                    username,
+//                    password
+//            )
+//
+//            if (account != null) {
+//                resetAccountView()
+//
+//                accountList[accountIndex!!].broker = account.broker
+//                accountList[accountIndex!!].accountType = AccountType.valueOf(account.accountType)
+//                accountList[accountIndex!!].username = account.username
+//                accountList[accountIndex!!].password = account.password
+//                accountList[accountIndex!!].isAuthenticated = account.isAuthenticated
+//
+//                refreshAccountList()
+//            }
+//        } else {
+//            val account = accountService.create(
+//                    broker,
+//                    "$accountType",
+//                    username,
+//                    password,
+//                    ""
+//            )
+//
+//            if (account != null) {
+//                resetAccountView()
+//
+//                accountList.add(AccountView(
+//                        account.id.value,
+//                        account.broker,
+//                        AccountType.valueOf(account.accountType),
+//                        account.username,
+//                        account.password,
+//                        account.accountId,
+//                        account.isAuthenticated
+//                ))
+//
+//                refreshAccountList()
+//            }
+//        }
+    }
 
-                refreshAccountList()
-            }
-        } else {
-            val account = accountService.create(
-                    broker,
-                    "$accountType",
-                    username,
-                    password,
-                    ""
-            )
+    /**
+     * Permet d'afficher le formulaire de connexion
+     */
+    fun addAccount() {
+        stackPaneController.selectPane(StackPane.CONNECTION_ACCOUNT)
+    }
 
-            if (account != null) {
-                resetAccountView()
+    /**
+     * Permet de supprimer un compte de trading
+     */
+    fun deleteAccount(account: AccountView) {
+//        accountService.delete(account.id)
+
+        accountList.remove(account)
+
+        fire(OpenConnectionFormEvent())
+    }
+
+    /**
+     * Permet de déconnecter un compte de trading
+     */
+    fun logout(account: AccountView) {
+//        accountService.disconnect(account.id)
+
+        resetAccountView()
+        refreshAccountList()
+    }
+
+    override fun update(message: Messages, data: Any?) {
+        message.also(::println)
+        when(message) {
+            Messages.SUCCESS_LOGIN -> {
+                val account = data as Account
 
                 accountList.add(AccountView(
                         account.id.value,
@@ -125,33 +186,5 @@ class AccountController : Controller() {
                 refreshAccountList()
             }
         }
-    }
-
-    /**
-     * Permet d'afficher le formulaire de connexion
-     */
-    fun addAccount() {
-        stackPaneController.selectPane(StackPane.CONNECTION_ACCOUNT)
-    }
-
-    /**
-     * Permet de supprimer un compte de trading
-     */
-    fun deleteAccount(account: AccountView) {
-        accountService.delete(account.id)
-
-        accountList.remove(account)
-
-        fire(OpenConnectionFormEvent())
-    }
-
-    /**
-     * Permet de déconnecter un compte de trading
-     */
-    fun logout(account: AccountView) {
-        accountService.disconnect(account.id)
-
-        resetAccountView()
-        refreshAccountList()
     }
 }

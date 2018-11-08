@@ -1,0 +1,12 @@
+package com.traderbook.api.enums
+
+enum class Messages {
+    AUTHENTICATION_FAILED,
+    LOGIN_IN_PROGRESS,
+    SUCCESS_LOGOUT,
+    LOGOUT_FAILURE,
+    SUCCESS_LOGIN,
+    SUCCESS_LOGIN_ACCOUNT_CREATED,
+    INSTRUMENTS_UPDATED,
+    BAD_CREDENTIALS
+}
