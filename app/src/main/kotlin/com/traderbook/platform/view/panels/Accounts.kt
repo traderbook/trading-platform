@@ -34,7 +34,7 @@ class Accounts : View("Accounts read") {
                 item("DELETE") {
                     action {
                         selectedItem?.let {
-                            accountController.deleteAccount(it)
+                            accountController.deleteAccount()
                         }
                     }
                 }
