@@ -92,51 +92,6 @@ class AccountController : Controller(), IConnectorObserver {
         )
 
         connectorService.start()
-//        if (id != null) {
-//            val account = accountService.update(
-//                    id,
-//                    broker,
-//                    "$accountType",
-//                    username,
-//                    password
-//            )
-//
-//            if (account != null) {
-//                resetAccountView()
-//
-//                accountList[accountIndex!!].broker = account.broker
-//                accountList[accountIndex!!].accountType = AccountType.valueOf(account.accountType)
-//                accountList[accountIndex!!].username = account.username
-//                accountList[accountIndex!!].password = account.password
-//                accountList[accountIndex!!].isAuthenticated = account.isAuthenticated
-//
-//                refreshAccountList()
-//            }
-//        } else {
-//            val account = accountService.create(
-//                    broker,
-//                    "$accountType",
-//                    username,
-//                    password,
-//                    ""
-//            )
-//
-//            if (account != null) {
-//                resetAccountView()
-//
-//                accountList.add(AccountView(
-//                        account.id.value,
-//                        account.broker,
-//                        AccountType.valueOf(account.accountType),
-//                        account.username,
-//                        account.password,
-//                        account.accountId,
-//                        account.isAuthenticated
-//                ))
-//
-//                refreshAccountList()
-//            }
-//        }
     }
 
     /**

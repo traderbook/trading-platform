@@ -1,5 +1,6 @@
 package com.traderbook.platform.app.services
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.tables.Accounts
 import org.jetbrains.exposed.sql.SizedIterable
@@ -41,6 +42,18 @@ class AccountService {
         }
 
         return account
+    }
+
+    fun updateStatusAuthentication(accountId: String, isAuthenticated: Boolean) {
+        transaction {
+            val accounts = Account.find {
+                Accounts.accountId  eq accountId
+            }
+
+            if(!accounts.empty()) {
+                accounts.first().isAuthenticated = isAuthenticated
+            }
+        }
     }
 
     /**

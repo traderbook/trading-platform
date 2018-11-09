@@ -39,6 +39,21 @@ class Accounts : View("Accounts read") {
                     }
                 }
 
+
+                item("CONNECT") {
+                    action {
+                        selectedItem?.let {
+                            accountController.connection(
+                                    selectedItem!!.id,
+                                    selectedItem!!.broker,
+                                    selectedItem!!.accountType,
+                                    selectedItem!!.username,
+                                    selectedItem!!.password
+                            )
+                        }
+                    }
+                }
+
                 item("LOGOUT") {
                     action {
                         selectedItem?.let {
@@ -49,7 +64,8 @@ class Accounts : View("Accounts read") {
             }
 
             onUserSelect(1) {
-                ctxMenu.items.get(2).disableProperty().bind(!it.isAuthenticatedProperty)
+                ctxMenu.items.get(2).disableProperty().bind(it.isAuthenticatedProperty)
+                ctxMenu.items.get(3).disableProperty().bind(!it.isAuthenticatedProperty)
             }
 
             placeholder = label("EMPTY LIST CLICK ADD ACCOUNT")
