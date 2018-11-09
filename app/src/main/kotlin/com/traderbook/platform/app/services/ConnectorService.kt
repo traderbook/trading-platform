@@ -56,6 +56,8 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
 
         runLater {
             accounts.forEach {
+                it.isAuthenticated.also(::println)
+
                 if(it.isAuthenticated) {
                     initializeConnector(it.broker)
 
@@ -125,6 +127,8 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
                             brokerAccount.accountId
                     ))
                 } else {
+                    accountService.updateStatusAuthentication(brokerAccount.accountId, true)
+
                     controller.update(message, account)
                 }
             }
