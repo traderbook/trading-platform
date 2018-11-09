@@ -84,9 +84,15 @@ class AccountService {
     /**
      * Permet la suppression d'un compte de trading
      */
-    fun delete(id: Int) {
+    fun delete(accountId: String) {
         transaction {
-            Account.findById(id)!!.delete()
+            val accounts = Account.find {
+                Accounts.accountId eq accountId
+            }
+
+            if(!accounts.empty()) {
+                accounts.first().delete()
+            }
         }
     }
 

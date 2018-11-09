@@ -104,12 +104,8 @@ class AccountController : Controller(), IConnectorObserver {
     /**
      * Permet de supprimer un compte de trading
      */
-    fun deleteAccount(account: AccountView) {
-//        accountService.delete(account.id)
-
-        accountList.remove(account)
-
-        fire(OpenConnectionFormEvent())
+    fun deleteAccount() {
+        connectorService.stopThenDelete()
     }
 
     /**
@@ -149,15 +145,16 @@ class AccountController : Controller(), IConnectorObserver {
                 refreshAccountList()
             }
             Messages.LOGOUT_SUCCESS -> {
+                resetAccountView()
+                refreshAccountList()
+            }
+            Messages.ACCOUNT_DELETED -> {
                 val account = data as BrokerAccount
 
-                accountList.forEach {
-                    if(it.accountId == account.accountId) {
-                        it.isAuthenticatedProperty.value = false
-                    }
+                accountList.removeIf {
+                    it.accountId == account.accountId
                 }
 
-                resetAccountView()
                 refreshAccountList()
             }
             Messages.LOGOUT_FAILURE -> { }

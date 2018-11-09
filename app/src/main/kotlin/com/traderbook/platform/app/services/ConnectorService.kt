@@ -19,6 +19,7 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
     private val accountService = AccountService()
     private var connector: IConnector? = null
 
+    private var deleteAccountAction: Boolean = false
     private var name: String? = null
     private var accountType: AccountType? = null
     private var username: String? = null
@@ -91,6 +92,11 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
         return connectors[name]
     }
 
+    fun stopThenDelete() {
+        deleteAccountAction = true
+        connector!!.stop()
+    }
+
     override fun connection(accountType: AccountType, username: String, password: String) {
         this.accountType = accountType
         this.username = username
@@ -137,9 +143,14 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
             Messages.LOGOUT_SUCCESS -> {
                 val account = data as BrokerAccount
 
-                accountService.disconnect(account.accountId)
-
-                controller.update(message, data)
+                if(deleteAccountAction) {
+                    deleteAccountAction = false
+                    accountService.delete(account.accountId)
+                    controller.update(Messages.ACCOUNT_DELETED, data)
+                } else {
+                    accountService.disconnect(account.accountId)
+                    controller.update(message, data)
+                }
             }
             else -> println("Error occured")
         }
