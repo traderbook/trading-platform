@@ -26,7 +26,10 @@ class MainView : View("Main view") {
                 add(Graphics::class)
             }
             left {
-                add(Accounts::class)
+                vbox {
+                    add(Instruments::class)
+                    add(Accounts::class)
+                }
             }
             bottom {
                 add(StatusBar::class)
