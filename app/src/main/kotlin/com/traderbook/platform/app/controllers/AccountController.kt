@@ -9,7 +9,6 @@ import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.emuns.StackPane
 import com.traderbook.platform.app.models.views.AccountView
-import com.traderbook.platform.app.services.AccountService
 import com.traderbook.platform.app.services.ConnectorService
 import tornadofx.*
 
@@ -117,7 +116,7 @@ class AccountController : Controller(), IConnectorObserver {
 
     override fun update(message: Messages, data: Any?) {
         message.also(::println)
-        when(message) {
+        when (message) {
             Messages.SUCCESS_LOGIN_ACCOUNT_CREATED -> {
                 val account = data as Account
 
@@ -137,7 +136,7 @@ class AccountController : Controller(), IConnectorObserver {
                 val account = data as Account
 
                 accountList.forEach {
-                    if(it.id == account.id.value) {
+                    if (it.id == account.id.value) {
                         it.isAuthenticatedProperty.value = true
                     }
                 }
@@ -157,7 +156,10 @@ class AccountController : Controller(), IConnectorObserver {
 
                 refreshAccountList()
             }
-            Messages.LOGOUT_FAILURE -> { }
+            Messages.LOGOUT_FAILURE -> {
+                resetAccountView()
+                refreshAccountList()
+            }
         }
     }
 }
