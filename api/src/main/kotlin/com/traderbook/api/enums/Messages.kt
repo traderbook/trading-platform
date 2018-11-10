@@ -1,6 +1,7 @@
 package com.traderbook.api.enums
 
 enum class Messages {
+    BROKER_MAINTENANCE_MODE,
     ACCOUNT_DELETED,
     AUTHENTICATION_FAILED,
     LOGIN_IN_PROGRESS,
