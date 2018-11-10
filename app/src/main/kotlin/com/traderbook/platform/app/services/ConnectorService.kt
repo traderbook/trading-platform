@@ -13,7 +13,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.jar.Manifest
 
-class ConnectorService(private val controller: IConnectorObserver): IConnector, IConnectorObserver {
+class ConnectorService(private val controller: IConnectorObserver) : IConnector, IConnectorObserver {
     private val connectorsPath = "${System.getProperty("user.home")}/${AppEnvironment.getProperty("applicationDir")}/connectors"
     private val connectors = mutableMapOf<String, Class<*>>()
     private val accountService = AccountService()
@@ -28,7 +28,7 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
     fun load() {
         val listFiles = File(connectorsPath).listFiles()
 
-        if(listFiles == null) {
+        if (listFiles == null) {
             println("Empty list files")
         } else {
             listFiles.forEach {
@@ -38,10 +38,10 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
 
                 val resources = urlLoader.loadClass("com.traderbook.connector.Connector").classLoader.getResources("META-INF/MANIFEST.MF")
 
-                for(resource in resources) {
+                for (resource in resources) {
                     val manifest = Manifest(resource.openStream())
 
-                    if(manifest.mainAttributes.getValue("Title") != null) {
+                    if (manifest.mainAttributes.getValue("Title") != null) {
                         connectors.put(
                                 manifest.mainAttributes.getValue("Title"),
                                 urlLoader.loadClass("com.traderbook.connector.Connector") as Class<*>
@@ -59,7 +59,7 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
             accounts.forEach {
                 it.isAuthenticated.also(::println)
 
-                if(it.isAuthenticated) {
+                if (it.isAuthenticated) {
                     initializeConnector(it.broker)
 
                     connection(
@@ -118,13 +118,13 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
     }
 
     override fun update(message: Messages, data: Any?) {
-        when(message) {
+        when (message) {
             Messages.SUCCESS_LOGIN -> {
                 val brokerAccount = data as BrokerAccount
 
                 val account = accountService.getAccountByAccountId(brokerAccount.accountId)
 
-                if(account == null) {
+                if (account == null) {
                     controller.update(Messages.SUCCESS_LOGIN_ACCOUNT_CREATED, accountService.create(
                             this.name!!,
                             this.accountType!!.toString(),
@@ -143,7 +143,7 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
             Messages.LOGOUT_SUCCESS -> {
                 val account = data as BrokerAccount
 
-                if(deleteAccountAction) {
+                if (deleteAccountAction) {
                     deleteAccountAction = false
                     accountService.delete(account.accountId)
                     controller.update(Messages.ACCOUNT_DELETED, data)
@@ -152,7 +152,11 @@ class ConnectorService(private val controller: IConnectorObserver): IConnector, 
                     controller.update(message, data)
                 }
             }
-            else -> println("Error occured")
+            else -> {
+                controller.update(Messages.LOGOUT_FAILURE, null)
+
+                println("Error occured")
+            }
         }
     }
 }
