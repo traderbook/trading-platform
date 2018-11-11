@@ -25,6 +25,20 @@ class Instruments : View("My View") {
             smartResize()
             selectionModel.selectionMode = SelectionMode.SINGLE
 
+            contextmenu {
+                item("OPEN GRAPH") {
+                    action {
+                        println("Il faut ouvrir un graphique")
+                    }
+                }
+
+                item("PLACE ORDER") {
+                    action {
+                        println("Il faut ouvrir une modal de prise de position")
+                    }
+                }
+            }
+
             placeholder = label("EMPTY INSTRUMENT LIST")
         }
     }
