@@ -32,6 +32,11 @@ open class App : App(MainView::class, Styles::class) {
             SchemaUtils.create(Accounts)
         }
 
+        stage.setOnCloseRequest {
+            stage.close()
+            System.exit(0)
+        }
+
         super.start(stage)
     }
 }
