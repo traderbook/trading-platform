@@ -1,38 +1,57 @@
 package com.traderbook.platform.app.controllers
 
-import com.traderbook.api.enums.Instruments
+import com.traderbook.platform.app.events.InstrumentUpdatedEvent
 import com.traderbook.platform.app.models.views.InstrumentView
 import tornadofx.*
 
 class InstrumentController: Controller() {
     private val instrumentList = arrayListOf<InstrumentView>().observable()
+    var searchText = ""
+
     val instrumentFiltered = arrayListOf<InstrumentView>().observable()
 
     init {
-        instrumentList.add(InstrumentView(
-                Instruments.EURUSD,
-                1.1234,
-                1.1234
-        ))
+        subscribe<InstrumentUpdatedEvent> {
+            val instruments = arrayListOf<InstrumentView>()
 
-        instrumentList.add(InstrumentView(
-                Instruments.GBPUSD,
-                1.1234,
-                1.1234
-        ))
+            it.instrumentCollection.instruments.forEach {
+                instruments.add(InstrumentView(
+                            it.value.id,
+                            it.value.name,
+                            it.value.ask,
+                            it.value.bid,
+                            it.value.oldAsk,
+                            it.value.oldBid
+                    ))
+            }
 
-        instrumentFiltered.addAll(instrumentList)
+            instrumentList.clear()
+            instrumentList.addAll(instruments)
+
+            instrumentFiltered.clear()
+            instrumentFiltered.addAll(instrumentList)
+
+            searchInstrument(searchText)
+        }
     }
 
     fun searchInstrument(text: String) {
-        val list = instrumentList.filter { it.nameProperty.value.toString().contains(text) }
+        searchText = text
+
+        if(text == "") {
+            instrumentFiltered.clear()
+            instrumentFiltered.addAll(instrumentList)
+
+            return
+        }
+
+        val list = instrumentList.filter { it.nameProperty.value.toString().toLowerCase().contains(text.toLowerCase()) }
 
         if(list.count() > 0) {
             instrumentFiltered.clear()
             instrumentFiltered.addAll(list)
         } else {
             instrumentFiltered.clear()
-            instrumentFiltered.addAll(instrumentList)
         }
     }
 }

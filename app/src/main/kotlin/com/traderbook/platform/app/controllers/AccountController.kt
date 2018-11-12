@@ -4,7 +4,9 @@ import com.traderbook.api.AccountType
 import com.traderbook.api.enums.Messages
 import com.traderbook.api.interfaces.IConnectorObserver
 import com.traderbook.api.models.BrokerAccount
+import com.traderbook.api.models.InstrumentCollection
 import com.traderbook.platform.app.events.AccountListRefreshEvent
+import com.traderbook.platform.app.events.InstrumentUpdatedEvent
 import com.traderbook.platform.app.events.OpenConnectionFormEvent
 import com.traderbook.platform.app.models.Account
 import com.traderbook.platform.app.models.emuns.StackPane
@@ -156,6 +158,7 @@ class AccountController : Controller(), IConnectorObserver {
 
                 refreshAccountList()
             }
+            Messages.INSTRUMENTS_UPDATED -> fire(InstrumentUpdatedEvent(data as InstrumentCollection))
             Messages.LOGOUT_FAILURE -> {
                 resetAccountView()
                 refreshAccountList()
