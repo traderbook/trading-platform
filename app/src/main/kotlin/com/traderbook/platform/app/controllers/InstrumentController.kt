@@ -5,7 +5,8 @@ import com.traderbook.platform.app.models.views.InstrumentView
 import tornadofx.*
 
 class InstrumentController: Controller() {
-    val instrumentList = arrayListOf<InstrumentView>().observable()
+    private val instrumentList = arrayListOf<InstrumentView>().observable()
+    val instrumentFiltered = arrayListOf<InstrumentView>().observable()
 
     init {
         subscribe<InstrumentUpdatedEvent> {
@@ -24,6 +25,21 @@ class InstrumentController: Controller() {
 
             instrumentList.clear()
             instrumentList.addAll(instruments)
+
+            instrumentFiltered.clear()
+            instrumentFiltered.addAll(instrumentList)
+        }
+    }
+
+    fun searchInstrument(text: String) {
+        val list = instrumentList.filter { it.nameProperty.value.toString().contains(text) }
+
+        if(list.count() > 0) {
+            instrumentFiltered.clear()
+            instrumentFiltered.addAll(list)
+        } else {
+            instrumentFiltered.clear()
+            instrumentFiltered.addAll(instrumentList)
         }
     }
 }
