@@ -2,6 +2,7 @@ package com.traderbook.platform.view.panels
 
 import com.traderbook.platform.app.controllers.InstrumentController
 import com.traderbook.platform.app.models.views.InstrumentView
+import javafx.beans.property.ReadOnlyListProperty
 import javafx.scene.control.SelectionMode
 import tornadofx.*
 

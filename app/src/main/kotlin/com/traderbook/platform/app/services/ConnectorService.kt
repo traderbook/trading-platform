@@ -152,6 +152,7 @@ class ConnectorService(private val controller: IConnectorObserver) : IConnector,
                     controller.update(message, data)
                 }
             }
+            Messages.INSTRUMENTS_UPDATED -> controller.update(message, data)
             else -> {
                 controller.update(Messages.LOGOUT_FAILURE, null)
 
