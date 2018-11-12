@@ -6,6 +6,8 @@ import tornadofx.*
 
 class InstrumentController: Controller() {
     private val instrumentList = arrayListOf<InstrumentView>().observable()
+    var searchText = ""
+
     val instrumentFiltered = arrayListOf<InstrumentView>().observable()
 
     init {
@@ -28,18 +30,28 @@ class InstrumentController: Controller() {
 
             instrumentFiltered.clear()
             instrumentFiltered.addAll(instrumentList)
+
+            searchInstrument(searchText)
         }
     }
 
     fun searchInstrument(text: String) {
-        val list = instrumentList.filter { it.nameProperty.value.toString().contains(text) }
+        searchText = text
+
+        if(text == "") {
+            instrumentFiltered.clear()
+            instrumentFiltered.addAll(instrumentList)
+
+            return
+        }
+
+        val list = instrumentList.filter { it.nameProperty.value.toString().toLowerCase().contains(text.toLowerCase()) }
 
         if(list.count() > 0) {
             instrumentFiltered.clear()
             instrumentFiltered.addAll(list)
         } else {
             instrumentFiltered.clear()
-            instrumentFiltered.addAll(instrumentList)
         }
     }
 }
