@@ -9,6 +9,8 @@ class Styles : Stylesheet() {
     init {
         root {
             fontSize = 15.pt
+            prefWidth = 1680.0.pt
+            prefHeight = 1050.0.pt
         }
     }
 }
