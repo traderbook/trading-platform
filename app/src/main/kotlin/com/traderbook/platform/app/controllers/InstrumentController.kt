@@ -38,7 +38,7 @@ class InstrumentController: Controller() {
     fun searchInstrument(text: String) {
         searchText = text
 
-        val list = instrumentList.filter { it.nameProperty.value.toString().contains(text) }
+        val list = instrumentList.filter { it.nameProperty.value.toString().toLowerCase().contains(text.toLowerCase()) }
 
         if(list.count() > 0) {
             instrumentFiltered.clear()
