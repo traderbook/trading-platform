@@ -30,6 +30,7 @@ class Instruments : View("My View") {
 
                         action {
                             researchField.text = null
+                            instrumentController.searchInstrument("")
                         }
                     }
                 }
