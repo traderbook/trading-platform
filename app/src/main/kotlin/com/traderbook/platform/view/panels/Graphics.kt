@@ -1,125 +1,55 @@
 package com.traderbook.platform.view.panels
 
+import com.traderbook.platform.app.events.OpenGraphicEvent
 import javafx.event.EventHandler
-import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.scene.control.Tab
-import javafx.scene.input.TransferMode
+import javafx.scene.control.TabPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.VBox
 import tornadofx.*
-import javafx.scene.input.ClipboardContent
-import javafx.scene.input.Dragboard
-
 
 
 class Graphics : View("My View") {
     override val root = vbox {
         tabpane {
+            tabClosingPolicy = TabPane.TabClosingPolicy.ALL_TABS
 
-            val tabs = this.tabs
+            subscribe<OpenGraphicEvent> {
+                val instruments = it.instruments
 
-            setOnDragDetected {
-                this.startFullDrag()
+                val tab = Tab("")
 
-                println(this.selectionModel.selectedIndex)
+                val hbox = HBox()
 
+                hbox.add(Label(instruments.toString()))
 
-                val dragboard = this.startDragAndDrop(*TransferMode.ANY)
-                val clipboardContent = ClipboardContent()
-                clipboardContent.putString(this.selectionModel.selectedIndex.toString())
-                dragboard.setContent(clipboardContent)
+                val detachBtn = Label(" D ")
 
-                it.consume()
-            }
+                detachBtn.onMouseClicked = EventHandler {
+                    find<GraphicModal>(mapOf(GraphicModal::instruments to instruments)) {
+                        openModal()
+                    }
 
-            setOnDragOver {
-                if(it.getDragboard().hasString())
-                {
-                    it.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
+                    tab.close()
                 }
 
-                it.consume()
-            }
+                hbox.add(detachBtn)
 
-            setOnDragDropped {
-                it.dragboard.also(::println)
-                var success = false
+                val vbox = VBox()
 
-                val dragboard = it.getDragboard()
+                vbox.add(Label("coucou ${it.instruments.toString()}"))
 
-                if(dragboard.hasString())
-                {
-                    System.out.println("from " + dragboard.getString() + " to ")
-
-                    success = true
+                tab.region {
+                    useMaxWidth = true
+                    useMaxHeight = true
                 }
 
-                it.setDropCompleted(success)
+                tab.graphic = hbox
+                tab.content = vbox
 
-                it.consume()
+                this@tabpane.tabs.add(tab)
             }
-
-            setOnDragDone {
-                if(it.getTransferMode() == TransferMode.MOVE)
-                {
-                    // tabPane.setText("");
-                }
-                it.consume()
-            }
-
-            tab("EURUSD") {
-//                graphic = hbox {
-//                    label { text = "EURUSD" }
-//                    label {
-//                        text = " D "
-//
-//                        onMouseClicked = EventHandler {
-//                            println("Doit permettre de détacher le graphique")
-//                        }
-//                    }
-//                }
-
-                vbox {
-                    label("coucou EURUSD")
-                }
-
-                useMaxWidth = true
-                useMaxHeight = true
-
-//                onDragDetected = EventHandler {
-//                    println("Drag")
-//                    val t = it.source as Node
-//
-//                    println(t.indexInParent)
-//
-////                val start = it.source as Node
-////
-////                start.startFullDrag()
-//                }
-
-//                setOnDragDetected {
-//                    println("cool detached")
-//                }
-            }
-
-            tab("GBPUSD") {
-//                graphic = hbox {
-//                    label { text = "GBPUSD" }
-//                    label {
-//                        text = " D "
-//
-//                        onMouseClicked = EventHandler {
-//                            println("Doit permettre de détacher le graphique")
-//                        }
-//                    }
-//                }
-
-                vbox {
-                    label("coucou GBPUSD")
-                }
-
-                useMaxWidth = true
-                useMaxHeight = true
-            }
-
         }
     }
 }
