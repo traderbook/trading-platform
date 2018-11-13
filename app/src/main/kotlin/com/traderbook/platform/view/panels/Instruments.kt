@@ -67,7 +67,6 @@ class Instruments : View("My View") {
                 }
             }
 
-            placeholder = label("EMPTY INSTRUMENT LIST")
             items.onChange {
                 if(items.count() == 0) {
                     placeholder = label("INSTRUMENTS NOT FOUND")
