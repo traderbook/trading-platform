@@ -1,6 +1,7 @@
 package com.traderbook.platform.view.panels
 
 import com.traderbook.platform.app.controllers.InstrumentController
+import com.traderbook.platform.app.events.OpenGraphicEvent
 import com.traderbook.platform.app.models.views.InstrumentView
 import javafx.event.EventHandler
 import javafx.scene.control.SelectionMode
@@ -38,6 +39,8 @@ class Instruments : View("My View") {
         }
 
         tableview(instrumentController.instrumentFiltered) {
+            var instrumentSelected = selectedItem
+
             column("NAME", InstrumentView::name)
             column("ASK", InstrumentView::ask) {
                 cellFormat {
@@ -53,10 +56,14 @@ class Instruments : View("My View") {
             smartResize()
             selectionModel.selectionMode = SelectionMode.SINGLE
 
+            onUserSelect(1) {
+                instrumentSelected = selectedItem
+            }
+
             contextmenu {
                 item("OPEN GRAPH") {
                     action {
-                        println("Il faut ouvrir un graphique")
+                        fire(OpenGraphicEvent(instrumentSelected!!.name))
                     }
                 }
 
@@ -67,7 +74,6 @@ class Instruments : View("My View") {
                 }
             }
 
-            placeholder = label("EMPTY INSTRUMENT LIST")
             items.onChange {
                 if(items.count() == 0) {
                     placeholder = label("INSTRUMENTS NOT FOUND")
